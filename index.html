@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refund Request — GuestStay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf8f4;
+    --warm-white: #fffef9;
+    --ink: #1a1814;
+    --ink-muted: #6b6560;
+    --ink-faint: #b8b4ae;
+    --terracotta: #c4673a;
+    --terracotta-light: #f5e8e0;
+    --amber: #e8a020;
+    --amber-light: #fef8e8;
+    --sage: #5a7a5a;
+    --sage-light: #edf3ed;
+    --border: #e8e4de;
+    --shadow-sm: 0 1px 3px rgba(26,24,20,0.08);
+    --shadow-md: 0 4px 16px rgba(26,24,20,0.10);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --bg: var(--cream);
+    --surface: var(--warm-white);
+    --text: var(--ink);
+    --text-muted: var(--ink-muted);
+    --text-faint: var(--ink-faint);
+    --input-bg: var(--cream);
+    --input-focus-bg: var(--warm-white);
+  }
+  [data-theme="dark"] {
+    --bg: #141210;
+    --surface: #1e1b18;
+    --text: #f0ede8;
+    --text-muted: #9b948c;
+    --text-faint: #5a5550;
+    --border: #2e2a26;
+    --input-bg: #171512;
+    --input-focus-bg: #1e1b18;
+    --cream: #141210;
+    --warm-white: #1e1b18;
+    --ink: #f0ede8;
+    --ink-muted: #9b948c;
+    --ink-faint: #5a5550;
+    --terracotta-light: #2a1a12;
+    --amber-light: #231a08;
+    --sage-light: #111a11;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .logo span { color: var(--terracotta); }
+
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: background 0.18s, border-color 0.18s, color 0.18s;
+  }
+  .icon-btn:hover { background: var(--terracotta-light); border-color: var(--terracotta); color: var(--terracotta); }
+
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .page-header { margin-bottom: 40px; }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .page-header p { color: var(--text-muted); font-size: 15px; font-weight: 300; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .form-grid { display: grid; gap: 24px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+
+  label {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.3px;
+    color: var(--text); text-transform: uppercase;
+  }
+  label .req { color: var(--terracotta); margin-left: 2px; }
+  label .opt { color: var(--text-faint); font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+  input, select, textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--input-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.3s, color 0.3s;
+    outline: none;
+    width: 100%;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 3px rgba(196,103,58,0.12);
+    background: var(--input-focus-bg);
+  }
+  input.error, select.error, textarea.error {
+    border-color: #d94f4f;
+    box-shadow: 0 0 0 3px rgba(217,79,79,0.10);
+  }
+  textarea { resize: vertical; min-height: 110px; }
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+  }
+  select option { background: var(--surface); color: var(--text); }
+
+  .char-count {
+    font-size: 11px; color: var(--text-faint);
+    text-align: right; margin-top: -4px;
+    transition: color 0.18s;
+  }
+  .char-count.warn { color: var(--amber); }
+  .char-count.over { color: #d94f4f; }
+
+  .error-msg { font-size: 12px; color: #d94f4f; font-weight: 500; display: none; }
+  .field.has-error .error-msg { display: block; }
+
+  /* File upload */
+  .file-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 28px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s;
+    position: relative;
+    background: var(--input-bg);
+  }
+  .file-zone:hover, .file-zone.dragover {
+    border-color: var(--terracotta); background: var(--terracotta-light);
+  }
+  .file-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; border: none; padding: 0; width: 100%; height: 100%;
+  }
+  .file-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .file-zone p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+  .file-zone strong { color: var(--terracotta); }
+  .file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+  .file-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--terracotta-light); border-radius: 6px; padding: 8px 12px;
+    font-size: 13px; font-weight: 500;
+  }
+  .file-item .remove {
+    margin-left: auto; cursor: pointer; color: var(--terracotta);
+    font-weight: 700; font-size: 16px; line-height: 1; background: none; border: none;
+  }
+
+  /* Warning banner */
+  .warning-banner {
+    display: none;
+    background: var(--amber-light);
+    border: 1.5px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px; gap: 10px;
+    align-items: flex-start;
+    font-size: 14px; color: #7a5500; line-height: 1.5;
+  }
+  [data-theme="dark"] .warning-banner { color: #d4a030; }
+  .warning-banner.show { display: flex; }
+  .warning-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Status banner */
+  .status-banner {
+    display: none; border-radius: var(--radius-sm);
+    padding: 12px 16px; font-size: 14px; font-weight: 500;
+    align-items: center; gap: 10px; margin-bottom: 0;
+  }
+  .status-banner.show { display: flex; }
+  .status-banner.saving { background: var(--amber-light); border: 1.5px solid var(--amber); color: #7a5500; }
+  .status-banner.saved { background: var(--sage-light); border: 1.5px solid var(--sage); color: #2a4a2a; }
+  .status-banner.error-save { background: #fef0f0; border: 1.5px solid #d94f4f; color: #9a2020; }
+  [data-theme="dark"] .status-banner.saving { color: #d4a030; }
+  [data-theme="dark"] .status-banner.saved { color: #6aaa6a; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+
+  .section-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-faint); margin-bottom: -8px;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%; background: var(--ink); color: white;
+    border: none; border-radius: var(--radius-sm);
+    padding: 15px 24px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; letter-spacing: 0.2px;
+    transition: background 0.18s, transform 0.1s, opacity 0.2s;
+    margin-top: 8px; position: relative; overflow: hidden;
+  }
+  [data-theme="dark"] .submit-btn { background: var(--terracotta); }
+  .submit-btn:hover { opacity: 0.88; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Loading spinner inside button */
+  .btn-spinner {
+    display: none; width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+    margin: 0 auto;
+  }
+  .submit-btn.loading .btn-text { display: none; }
+  .submit-btn.loading .btn-spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Success screen */
+  .success-screen { display: none; }
+  .success-screen.show { display: block; }
+  .form-wrapper.hide { display: none; }
+
+  .success-header {
+    text-align: center; padding: 32px 0 28px;
+    border-bottom: 1px solid var(--border); margin-bottom: 32px;
+  }
+  .success-icon {
+    width: 64px; height: 64px; background: var(--sage-light);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 16px; color: var(--sage);
+  }
+  .success-header h2 {
+    font-family: 'DM Serif Display', serif; font-size: 28px; margin-bottom: 8px; color: var(--text);
+  }
+  .success-header p { color: var(--text-muted); font-size: 14px; }
+
+  .summary-grid { display: flex; flex-direction: column; gap: 0; }
+  .summary-row {
+    display: flex; padding: 14px 0;
+    border-bottom: 1px solid var(--border); gap: 16px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--text-muted);
+    width: 160px; flex-shrink: 0; padding-top: 1px;
+  }
+  .summary-val { font-size: 14px; color: var(--text); font-weight: 500; flex: 1; }
+  .ref-badge {
+    display: inline-block; background: var(--terracotta-light);
+    color: var(--terracotta); border: 1px solid rgba(196,103,58,0.2);
+    border-radius: 6px; padding: 3px 10px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .outside-window { color: var(--amber); font-weight: 600; }
+
+  /* Action buttons row */
+  .success-actions {
+    display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap;
+  }
+  .action-btn {
+    flex: 1; min-width: 140px; text-align: center;
+    padding: 13px 16px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.18s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-outline {
+    background: transparent; border: 1.5px solid var(--border); color: var(--text-muted);
+  }
+  .btn-outline:hover { border-color: var(--text); color: var(--text); }
+  .btn-primary-sm {
+    background: var(--terracotta); border: 1.5px solid var(--terracotta); color: white;
+  }
+  .btn-primary-sm:hover { opacity: 0.88; }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .page { padding: 28px 16px 60px; }
+    .card { padding: 24px 20px; }
+    .page-header h1 { font-size: 28px; }
+    .summary-key { width: 110px; font-size: 11px; }
+    .success-actions { flex-direction: column; }
+    .action-btn { min-width: unset; }
+  }
+
+  /* Print styles */
+  @media print {
+    .header, .form-wrapper, .success-actions, .icon-btn { display: none !important; }
+    .success-screen { display: block !important; }
+    body { background: white; color: black; }
+    .card { box-shadow: none; border: 1px solid #ccc; }
+    .summary-key { color: #555; }
+    .summary-val { color: #000; }
+  }
+
+  /* Animations */
+  .card { animation: fadeUp 0.35s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Notification toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: white;
+    padding: 12px 20px; border-radius: 10px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    opacity: 0; z-index: 999; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Guest<span>Stay</span></div>
+  <div class="header-actions">
+    <button class="icon-btn" id="themeToggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+  </div>
+</header>
+
+<main class="page">
+  <div class="page-header">
+    <h1>Refund Request</h1>
+    <p>Complete the form below and we'll review your request within 2–3 business days.</p>
+  </div>
+
+  <!-- FORM -->
+  <div class="card form-wrapper" id="formWrapper">
+    <form class="form-grid" id="refundForm" novalidate>
+
+      <div class="section-label">Your Details</div>
+
+      <div class="form-row">
+        <div class="field" id="field-name">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="fullName" placeholder="Jane Smith" autocomplete="name">
+          <span class="error-msg">Please enter your full name.</span>
+        </div>
+        <div class="field" id="field-email">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="jane@email.com" autocomplete="email">
+          <span class="error-msg">Please enter a valid email address.</span>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Booking Information</div>
+
+      <div class="form-row">
+        <div class="field" id="field-ref">
+          <label>Booking Reference <span class="req">*</span></label>
+          <input type="text" id="bookingRef" placeholder="e.g. BK-20481">
+          <span class="error-msg">Please enter your booking reference.</span>
+        </div>
+        <div class="field" id="field-date">
+          <label>Booking Date <span class="req">*</span></label>
+          <input type="date" id="bookingDate">
+          <span class="error-msg">Please select the booking date.</span>
+        </div>
+      </div>
+
+      <!-- Warning banner -->
+      <div class="warning-banner" id="warningBanner">
+        <span class="warning-icon">⚠️</span>
+        <span>Your booking is outside the standard refund window. Your request will be reviewed on a case-by-case basis.</span>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">Refund Details</div>
+
+      <div class="field" id="field-reason">
+        <label>Refund Reason <span class="req">*</span></label>
+        <select id="refundReason">
+          <option value="">Select a reason…</option>
+          <option value="Property Issue">Property Issue</option>
+          <option value="Booking Error">Booking Error</option>
+          <option value="Personal Reasons">Personal Reasons</option>
+          <option value="Other">Other</option>
+        </select>
+        <span class="error-msg">Please select a refund reason.</span>
+      </div>
+
+      <div class="field">
+        <label>Additional Details <span class="opt">— Optional</span></label>
+        <textarea id="details" placeholder="Please describe your situation in as much detail as possible…" maxlength="1000"></textarea>
+        <div class="char-count" id="charCount">0 / 1000</div>
+      </div>
+
+      <div class="field">
+        <label>Supporting Documents <span class="opt">— Optional</span></label>
+        <div class="file-zone" id="fileZone">
+          <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx">
+          <span class="file-icon">📎</span>
+          <p><strong>Click to upload</strong> or drag and drop<br>
+          <span style="font-size:12px;color:var(--text-faint);">Photos, PDFs, documents — up to 10MB each</span></p>
+        </div>
+        <div class="file-list" id="fileList"></div>
+      </div>
+
+      <!-- Save status -->
+      <div class="status-banner" id="statusBanner">
+        <span id="statusText"></span>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Submit Refund Request</span>
+        <span class="btn-spinner"></span>
+      </button>
+    </form>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="card success-screen" id="successScreen">
+    <div class="success-header">
+      <div class="success-icon">✓</div>
+      <h2>Request Submitted</h2>
+      <p>We've received your refund request. A confirmation summary is shown below.</p>
+    </div>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="success-actions">
+      <button class="action-btn btn-outline" id="printBtn">🖨️ Print / Save PDF</button>
+      <button class="action-btn btn-outline" id="csvBtn">⬇️ Export CSV</button>
+      <button class="action-btn btn-primary-sm" id="newRequestBtn">+ New Request</button>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+// JSONBin.io — free persistent storage. Data viewable at jsonbin.io dashboard.
+// To use your own bin:
+//   1. Sign up at https://jsonbin.io (free)
+//   2. Create a bin with initial value: []
+//   3. Replace BIN_ID and API_KEY below with your own
+const JSONBIN_BIN_ID = '686198e98960c979a59bf18b';
+const JSONBIN_API_KEY = '$2a$10$xLNM7DlvZJKmHNf8uxeNhOhBNQRiFZOT8Ai.X.aVGvVGpCeNFbP5e';
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ─── THEME TOGGLE ─────────────────────────────────────────────────────────────
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('gs_theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+themeToggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('gs_theme', next);
+  themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
+});
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ─── JSONBIN HELPERS ──────────────────────────────────────────────────────────
+async function fetchSubmissions() {
+  try {
+    const res = await fetch(JSONBIN_URL + '/latest', {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.record) ? data.record : [];
+  } catch { return []; }
+}
+
+async function saveToJsonBin(submission) {
+  // Get existing, append new, save back
+  const all = await fetchSubmissions();
+  all.push(submission);
+  const res = await fetch(JSONBIN_URL, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': JSONBIN_API_KEY
+    },
+    body: JSON.stringify(all)
+  });
+  if (!res.ok) throw new Error('Save failed: ' + res.status);
+  return all;
+}
+
+// ─── LOCAL STORAGE FALLBACK ───────────────────────────────────────────────────
+const STORE_KEY = 'gueststay_refund_requests';
+function saveLocal(data) {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORE_KEY)) || [];
+    all.push(data);
+    localStorage.setItem(STORE_KEY, JSON.stringify(all));
+  } catch {}
+}
+
+// ─── ID GENERATOR ─────────────────────────────────────────────────────────────
+function genId() {
+  return 'REF-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2,5).toUpperCase();
+}
+
+// ─── DATE WARNING ─────────────────────────────────────────────────────────────
+const bookingDateInput = document.getElementById('bookingDate');
+const warningBanner = document.getElementById('warningBanner');
+
+function checkDateWarning(val) {
+  if (!val) { warningBanner.classList.remove('show'); return false; }
+  const booking = new Date(val);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.floor((today - booking) / 86400000);
+  const outside = diffDays > 90;
+  warningBanner.classList.toggle('show', outside);
+  return outside;
+}
+bookingDateInput.addEventListener('change', () => checkDateWarning(bookingDateInput.value));
+
+// ─── CHARACTER COUNT ──────────────────────────────────────────────────────────
+const detailsTA = document.getElementById('details');
+const charCount = document.getElementById('charCount');
+detailsTA.addEventListener('input', () => {
+  const n = detailsTA.value.length;
+  charCount.textContent = n + ' / 1000';
+  charCount.className = 'char-count' + (n > 900 ? ' over' : n > 700 ? ' warn' : '');
+});
+
+// ─── FILE UPLOAD ──────────────────────────────────────────────────────────────
+const fileZone = document.getElementById('fileZone');
+const fileInput = document.getElementById('fileInput');
+const fileListEl = document.getElementById('fileList');
+let selectedFiles = [];
+
+fileZone.addEventListener('dragover', e => { e.preventDefault(); fileZone.classList.add('dragover'); });
+fileZone.addEventListener('dragleave', () => fileZone.classList.remove('dragover'));
+fileZone.addEventListener('drop', e => {
+  e.preventDefault(); fileZone.classList.remove('dragover');
+  addFiles(Array.from(e.dataTransfer.files));
+});
+fileInput.addEventListener('change', () => { addFiles(Array.from(fileInput.files)); fileInput.value = ''; });
+
+function addFiles(files) {
+  const oversized = files.filter(f => f.size > 10 * 1024 * 1024);
+  if (oversized.length) { showToast(`⚠️ ${oversized.length} file(s) exceed 10MB and were skipped.`); }
+  files.filter(f => f.size <= 10 * 1024 * 1024).forEach(f => {
+    if (!selectedFiles.find(x => x.name === f.name)) selectedFiles.push(f);
+  });
+  renderFileList();
+}
+function renderFileList() {
+  fileListEl.innerHTML = selectedFiles.map((f, i) => `
+    <div class="file-item">
+      <span>📄</span>
+      <span>${escHtml(f.name)}</span>
+      <span style="color:var(--text-faint);font-size:12px;margin-left:4px;">(${(f.size/1024).toFixed(0)} KB)</span>
+      <button class="remove" data-i="${i}" type="button" title="Remove">×</button>
+    </div>
+  `).join('');
+  fileListEl.querySelectorAll('.remove').forEach(btn =>
+    btn.addEventListener('click', () => { selectedFiles.splice(+btn.dataset.i, 1); renderFileList(); })
+  );
+}
+
+// ─── VALIDATION ───────────────────────────────────────────────────────────────
+function setError(id, msg) {
+  const el = document.getElementById('field-' + id);
+  if (!el) return;
+  el.classList.add('has-error');
+  if (msg) { const em = el.querySelector('.error-msg'); if (em) em.textContent = msg; }
+  const inp = el.querySelector('input, select, textarea');
+  if (inp) inp.classList.add('error');
+}
+function clearError(id) {
+  const el = document.getElementById('field-' + id);
+  if (!el) return;
+  el.classList.remove('has-error');
+  const inp = el.querySelector('input, select, textarea');
+  if (inp) inp.classList.remove('error');
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── STATUS BANNER ────────────────────────────────────────────────────────────
+function setStatus(type, msg) {
+  const b = document.getElementById('statusBanner');
+  b.className = 'status-banner show ' + type;
+  document.getElementById('statusText').textContent = msg;
+}
+function clearStatus() {
+  document.getElementById('statusBanner').className = 'status-banner';
+}
+
+// ─── FORM SUBMIT ─────────────────────────────────────────────────────────────
+document.getElementById('refundForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  let valid = true;
+
+  const name   = document.getElementById('fullName').value.trim();
+  const email  = document.getElementById('email').value.trim();
+  const ref    = document.getElementById('bookingRef').value.trim();
+  const date   = document.getElementById('bookingDate').value;
+  const reason = document.getElementById('refundReason').value;
+  const details = detailsTA.value.trim();
+
+  ['name','email','ref','date','reason'].forEach(clearError);
+  clearStatus();
+
+  if (!name) { setError('name', 'Please enter your full name.'); valid = false; }
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRx.test(email)) { setError('email', 'Please enter a valid email address.'); valid = false; }
+  if (!ref) { setError('ref', 'Please enter your booking reference.'); valid = false; }
+  if (!date) { setError('date', 'Please select the booking date.'); valid = false; }
+  if (!reason) { setError('reason', 'Please select a refund reason.'); valid = false; }
+
+  if (!valid) {
+    const first = document.querySelector('.has-error');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  setStatus('saving', '⏳  Saving your request…');
+
+  const isOutside = checkDateWarning(date);
+
+  const submission = {
+    id: genId(),
+    submittedAt: new Date().toISOString(),
+    fullName: name,
+    email,
+    bookingRef: ref,
+    bookingDate: date,
+    refundReason: reason,
+    details: details || '—',
+    files: selectedFiles.map(f => f.name),
+    outsideWindow: isOutside,
+  };
+
+  // Save to JSONBin (primary) + localStorage (fallback/backup)
+  let savedOnline = false;
+  try {
+    await saveToJsonBin(submission);
+    savedOnline = true;
+  } catch (err) {
+    console.warn('JSONBin save failed, falling back to localStorage:', err);
+  }
+  saveLocal(submission); // always save locally too
+
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+  clearStatus();
+
+  showSuccess(submission, savedOnline);
+});
+
+// ─── FORMAT HELPERS ───────────────────────────────────────────────────────────
+function formatDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+function formatDateTime(iso) {
+  return new Date(iso).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// ─── SUCCESS SCREEN ───────────────────────────────────────────────────────────
+let lastSubmission = null;
+function showSuccess(s, online) {
+  lastSubmission = s;
+  document.getElementById('formWrapper').classList.add('hide');
+  const screen = document.getElementById('successScreen');
+  screen.classList.add('show');
+
+  const rows = [
+    ['Request ID',        `<span class="ref-badge">${escHtml(s.id)}</span>`],
+    ['Submitted',         escHtml(formatDateTime(s.submittedAt))],
+    ['Saved To',          online ? '✅ Cloud (JSONBin) + Local backup' : '⚠️ Local storage only (offline)'],
+    ['Full Name',         escHtml(s.fullName)],
+    ['Email',             escHtml(s.email)],
+    ['Booking Reference', escHtml(s.bookingRef)],
+    ['Booking Date',      `${escHtml(formatDate(s.bookingDate))}${s.outsideWindow ? ' <span class="outside-window">— Outside refund window</span>' : ''}`],
+    ['Refund Reason',     escHtml(s.refundReason)],
+    ['Additional Details',escHtml(s.details)],
+    ['Attachments',       s.files.length ? s.files.map(escHtml).join(', ') : '<span style="color:var(--text-faint)">None uploaded</span>'],
+  ];
+
+  document.getElementById('summaryGrid').innerHTML = rows.map(([k,v]) => `
+    <div class="summary-row">
+      <span class="summary-key">${k}</span>
+      <span class="summary-val">${v}</span>
+    </div>
+  `).join('');
+
+  screen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const msg = online
+    ? '✅ Request saved to cloud successfully!'
+    : '⚠️ Saved locally only — check your connection.';
+  showToast(msg, 4000);
+}
+
+// ─── CSV EXPORT ───────────────────────────────────────────────────────────────
+document.getElementById('csvBtn').addEventListener('click', () => {
+  if (!lastSubmission) return;
+  const s = lastSubmission;
+  const headers = ['Request ID','Submitted At','Full Name','Email','Booking Reference','Booking Date','Refund Reason','Additional Details','Attachments','Outside 90-day Window'];
+  const row = [
+    s.id, s.submittedAt, s.fullName, s.email, s.bookingRef,
+    s.bookingDate, s.refundReason,
+    s.details.replace(/,/g, ';'),
+    s.files.join('; ') || 'None',
+    s.outsideWindow ? 'Yes' : 'No'
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`);
+
+  const csv = [headers.join(','), row.join(',')].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `refund-${s.id}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 CSV downloaded!');
+});
+
+// ─── PRINT ────────────────────────────────────────────────────────────────────
+document.getElementById('printBtn').addEventListener('click', () => {
+  showToast('🖨️ Opening print dialog…');
+  setTimeout(() => window.print(), 400);
+});
+
+// ─── NEW REQUEST ──────────────────────────────────────────────────────────────
+document.getElementById('newRequestBtn').addEventListener('click', () => {
+  document.getElementById('refundForm').reset();
+  selectedFiles = [];
+  renderFileList();
+  warningBanner.classList.remove('show');
+  charCount.textContent = '0 / 1000';
+  charCount.className = 'char-count';
+  clearStatus();
+  lastSubmission = null;
+  document.getElementById('formWrapper').classList.remove('hide');
+  document.getElementById('successScreen').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>
