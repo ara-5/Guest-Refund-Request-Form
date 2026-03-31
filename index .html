@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Submit a refund request for your GuestStay booking.">
+
+<!-- Security: CSP prevents XSS, restricts external resources -->
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'self';
+           script-src 'self' 'unsafe-inline';
+           style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+           font-src https://fonts.gstatic.com;
+           connect-src https://api.jsonbin.io;
+           img-src 'self' data:;">
+
+<title>Refund Request — GuestStay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── DESIGN TOKENS ──────────────────────────────────────────────────────── */
+  :root {
+    --cream:           #faf8f4;
+    --warm-white:      #fffef9;
+    --ink:             #1a1814;
+    --ink-muted:       #6b6560;
+    --ink-faint:       #b8b4ae;
+    --terracotta:      #c4673a;
+    --terracotta-light:#f5e8e0;
+    --amber:           #e8a020;
+    --amber-light:     #fef8e8;
+    --sage:            #5a7a5a;
+    --sage-light:      #edf3ed;
+    --border:          #e8e4de;
+    --shadow-sm:       0 1px 3px rgba(26,24,20,.08);
+    --shadow-md:       0 4px 16px rgba(26,24,20,.10);
+    --radius:          12px;
+    --radius-sm:       8px;
+    /* semantic aliases */
+    --bg:              var(--cream);
+    --surface:         var(--warm-white);
+    --text:            var(--ink);
+    --text-muted:      var(--ink-muted);
+    --text-faint:      var(--ink-faint);
+    --input-bg:        var(--cream);
+    --input-focus-bg:  var(--warm-white);
+  }
+
+  /* ── DARK THEME ─────────────────────────────────────────────────────────── */
+  [data-theme="dark"] {
+    --bg:              #141210;
+    --surface:         #1e1b18;
+    --text:            #f0ede8;
+    --text-muted:      #9b948c;
+    --text-faint:      #5a5550;
+    --border:          #2e2a26;
+    --input-bg:        #171512;
+    --input-focus-bg:  #1e1b18;
+    --cream:           #141210;
+    --warm-white:      #1e1b18;
+    --ink:             #f0ede8;
+    --ink-muted:       #9b948c;
+    --ink-faint:       #5a5550;
+    --terracotta-light:#2a1a12;
+    --amber-light:     #231a08;
+    --sage-light:      #111a11;
+    --shadow-sm:       0 1px 3px rgba(0,0,0,.30);
+    --shadow-md:       0 4px 16px rgba(0,0,0,.40);
+  }
+
+  /* ── RESET ──────────────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── BASE ───────────────────────────────────────────────────────────────── */
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+    transition: background .3s, color .3s;
+  }
+
+  /* ── HEADER ─────────────────────────────────────────────────────────────── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    position: sticky; top: 0; z-index: 100;
+    transition: background .3s, border-color .3s;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--text); letter-spacing: -.3px;
+  }
+  .logo span { color: var(--terracotta); }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+
+  .icon-btn {
+    width: 38px; height: 38px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--text-muted);
+    transition: background .18s, border-color .18s, color .18s;
+  }
+  .icon-btn:hover {
+    background: var(--terracotta-light);
+    border-color: var(--terracotta); color: var(--terracotta);
+  }
+  .icon-btn:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 2px; }
+
+  /* ── PAGE LAYOUT ────────────────────────────────────────────────────────── */
+  .page { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+
+  .page-header { margin-bottom: 40px; }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px; letter-spacing: -.5px;
+    line-height: 1.15; margin-bottom: 10px; color: var(--text);
+  }
+  .page-header p { color: var(--text-muted); font-size: 15px; font-weight: 300; }
+
+  /* ── CARD ───────────────────────────────────────────────────────────────── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 36px;
+    box-shadow: var(--shadow-sm);
+    transition: background .3s, border-color .3s;
+    animation: fadeUp .35s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FORM GRID ──────────────────────────────────────────────────────────── */
+  .form-grid { display: grid; gap: 24px; }
+  .form-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 560px) { .form-row { grid-template-columns: 1fr; } }
+
+  /* ── FIELD ──────────────────────────────────────────────────────────────── */
+  .field { display: flex; flex-direction: column; gap: 7px; }
+
+  label {
+    font-size: 13px; font-weight: 600; letter-spacing: .3px;
+    color: var(--text); text-transform: uppercase;
+  }
+  label .req { color: var(--terracotta); margin-left: 2px; }
+  label .opt {
+    color: var(--text-faint); font-weight: 400;
+    text-transform: none; letter-spacing: 0; font-size: 12px;
+  }
+
+  /* ── INPUTS ─────────────────────────────────────────────────────────────── */
+  input, select, textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--text);
+    background: var(--input-bg); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    transition: border-color .18s, box-shadow .18s, background .3s, color .3s;
+    outline: none; width: 100%; -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--terracotta);
+    box-shadow: 0 0 0 3px rgba(196,103,58,.12);
+    background: var(--input-focus-bg);
+  }
+  /* Accessible focus ring for keyboard users */
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--terracotta); outline-offset: 1px;
+  }
+  input.error, select.error, textarea.error {
+    border-color: #d94f4f;
+    box-shadow: 0 0 0 3px rgba(217,79,79,.10);
+  }
+  textarea { resize: vertical; min-height: 110px; }
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b6560' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+  }
+  select option { background: var(--surface); color: var(--text); }
+
+  /* ── CHARACTER COUNTER ──────────────────────────────────────────────────── */
+  .char-count {
+    font-size: 11px; color: var(--text-faint);
+    text-align: right; margin-top: -4px; transition: color .18s;
+  }
+  .char-count.warn { color: var(--amber); }
+  .char-count.over { color: #d94f4f; }
+
+  /* ── VALIDATION MESSAGES ────────────────────────────────────────────────── */
+  .error-msg { font-size: 12px; color: #d94f4f; font-weight: 500; display: none; }
+  .field.has-error .error-msg { display: block; }
+
+  /* ── FILE UPLOAD ZONE ───────────────────────────────────────────────────── */
+  .file-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-sm); padding: 28px 20px;
+    text-align: center; cursor: pointer;
+    transition: border-color .18s, background .18s;
+    position: relative; background: var(--input-bg);
+  }
+  .file-zone:hover, .file-zone.dragover {
+    border-color: var(--terracotta); background: var(--terracotta-light);
+  }
+  .file-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    border: none; padding: 0; width: 100%; height: 100%;
+  }
+  .file-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .file-zone p  { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+  .file-zone strong { color: var(--terracotta); }
+  .file-list { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+  .file-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--terracotta-light); border-radius: 6px; padding: 8px 12px;
+    font-size: 13px; font-weight: 500;
+  }
+  .file-item .remove {
+    margin-left: auto; cursor: pointer; color: var(--terracotta);
+    font-weight: 700; font-size: 16px; line-height: 1; background: none; border: none;
+  }
+  .file-item .remove:focus-visible { outline: 2px solid var(--terracotta); border-radius: 2px; }
+
+  /* ── WARNING BANNER (90-day) ────────────────────────────────────────────── */
+  .warning-banner {
+    display: none; background: var(--amber-light);
+    border: 1.5px solid var(--amber); border-radius: var(--radius-sm);
+    padding: 14px 16px; gap: 10px; align-items: flex-start;
+    font-size: 14px; color: #7a5500; line-height: 1.5;
+  }
+  [data-theme="dark"] .warning-banner { color: #d4a030; }
+  .warning-banner.show { display: flex; }
+  .warning-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── STATUS BANNER (saving / saved / error) ─────────────────────────────── */
+  .status-banner {
+    display: none; border-radius: var(--radius-sm);
+    padding: 12px 16px; font-size: 14px; font-weight: 500;
+    align-items: center; gap: 10px;
+  }
+  .status-banner.show    { display: flex; }
+  .status-banner.saving  { background: var(--amber-light);  border: 1.5px solid var(--amber);  color: #7a5500; }
+  .status-banner.saved   { background: var(--sage-light);   border: 1.5px solid var(--sage);   color: #2a4a2a; }
+  .status-banner.err     { background: #fef0f0;             border: 1.5px solid #d94f4f;       color: #9a2020; }
+  [data-theme="dark"] .status-banner.saving { color: #d4a030; }
+  [data-theme="dark"] .status-banner.saved  { color: #6aaa6a; }
+  [data-theme="dark"] .status-banner.err    { color: #e06060; }
+
+  /* ── DIVIDER / SECTION LABEL ────────────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
+  .section-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--text-faint); margin-bottom: -8px;
+  }
+
+  /* ── SUBMIT BUTTON ──────────────────────────────────────────────────────── */
+  .submit-btn {
+    width: 100%; background: var(--ink); color: #fff;
+    border: none; border-radius: var(--radius-sm); padding: 15px 24px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; letter-spacing: .2px;
+    transition: background .18s, transform .1s, opacity .2s;
+    margin-top: 8px; position: relative; overflow: hidden;
+  }
+  [data-theme="dark"] .submit-btn { background: var(--terracotta); }
+  .submit-btn:hover   { opacity: .88; }
+  .submit-btn:active  { transform: scale(.99); }
+  .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .submit-btn:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 2px; }
+
+  /* Loading spinner */
+  .btn-spinner {
+    display: none; width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+    border-radius: 50%; animation: spin .6s linear infinite; margin: 0 auto;
+  }
+  .submit-btn.loading .btn-text    { display: none; }
+  .submit-btn.loading .btn-spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SUCCESS SCREEN ─────────────────────────────────────────────────────── */
+  .success-screen { display: none; }
+  .success-screen.show { display: block; }
+  .form-wrapper.hide   { display: none; }
+
+  .success-header {
+    text-align: center; padding: 32px 0 28px;
+    border-bottom: 1px solid var(--border); margin-bottom: 32px;
+  }
+  .success-icon {
+    width: 64px; height: 64px; background: var(--sage-light);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 16px; color: var(--sage);
+  }
+  .success-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; margin-bottom: 8px; color: var(--text);
+  }
+  .success-header p { color: var(--text-muted); font-size: 14px; }
+
+  /* Summary table */
+  .summary-grid { display: flex; flex-direction: column; gap: 0; }
+  .summary-row {
+    display: flex; padding: 14px 0;
+    border-bottom: 1px solid var(--border); gap: 16px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .5px; color: var(--text-muted);
+    width: 160px; flex-shrink: 0; padding-top: 1px;
+  }
+  .summary-val { font-size: 14px; color: var(--text); font-weight: 500; flex: 1; word-break: break-word; }
+  .ref-badge {
+    display: inline-block; background: var(--terracotta-light);
+    color: var(--terracotta); border: 1px solid rgba(196,103,58,.2);
+    border-radius: 6px; padding: 3px 10px;
+    font-size: 13px; font-weight: 700; letter-spacing: .5px;
+  }
+  .outside-window { color: var(--amber); font-weight: 600; }
+
+  /* ── SUCCESS ACTION BUTTONS ─────────────────────────────────────────────── */
+  .success-actions {
+    display: flex; gap: 10px; margin-top: 28px; flex-wrap: wrap;
+  }
+  .action-btn {
+    flex: 1; min-width: 140px; text-align: center; padding: 13px 16px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all .18s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .action-btn:focus-visible { outline: 2px solid var(--terracotta); outline-offset: 2px; }
+  .btn-outline {
+    background: transparent; border: 1.5px solid var(--border); color: var(--text-muted);
+  }
+  .btn-outline:hover { border-color: var(--text); color: var(--text); }
+  .btn-primary-sm {
+    background: var(--terracotta); border: 1.5px solid var(--terracotta); color: #fff;
+  }
+  .btn-primary-sm:hover { opacity: .88; }
+
+  /* ── TOAST ──────────────────────────────────────────────────────────────── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink); color: #fff;
+    padding: 12px 20px; border-radius: 10px;
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-md);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+    opacity: 0; z-index: 999; white-space: nowrap;
+    /* Ensure toast text is also escaped before rendering */
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .page               { padding: 28px 16px 60px; }
+    .card               { padding: 24px 20px; }
+    .page-header h1     { font-size: 28px; }
+    .summary-key        { width: 110px; font-size: 11px; }
+    .success-actions    { flex-direction: column; }
+    .action-btn         { min-width: unset; }
+    .toast              { white-space: normal; text-align: center; width: calc(100% - 32px); }
+  }
+
+  /* ── PRINT ──────────────────────────────────────────────────────────────── */
+  @media print {
+    .header, .form-wrapper, .success-actions, .icon-btn, .toast { display: none !important; }
+    .success-screen { display: block !important; }
+    .page { padding: 0; }
+    body  { background: #fff; color: #000; font-size: 12px; }
+    .card { box-shadow: none; border: 1px solid #ccc; padding: 24px; }
+    .summary-key { color: #555; }
+    .summary-val { color: #000; }
+    .ref-badge   { background: #f5e8e0; color: #c4673a; border-color: #c4673a; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────────────── -->
+<header class="header" role="banner">
+  <div class="logo" aria-label="GuestStay">Guest<span>Stay</span></div>
+  <div class="header-actions">
+    <button class="icon-btn" id="themeToggle"
+      title="Toggle dark mode" aria-label="Toggle dark mode"
+      aria-pressed="false">🌙</button>
+  </div>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────────────────────────────────── -->
+<main class="page" id="main" role="main">
+  <div class="page-header">
+    <h1>Refund Request</h1>
+    <p>Complete the form below and we'll review your request within 2–3 business days.</p>
+  </div>
+
+  <!-- FORM ------------------------------------------------------------------ -->
+  <div class="card form-wrapper" id="formWrapper">
+    <form class="form-grid" id="refundForm" novalidate aria-label="Refund request form">
+
+      <div class="section-label" aria-hidden="true">Your Details</div>
+
+      <div class="form-row">
+        <div class="field" id="field-name">
+          <label for="fullName">Full Name <span class="req" aria-label="required">*</span></label>
+          <input type="text" id="fullName" name="fullName"
+            placeholder="Jane Smith" autocomplete="name"
+            maxlength="120" aria-required="true" aria-describedby="err-name">
+          <span class="error-msg" id="err-name" role="alert" aria-live="polite"></span>
+        </div>
+        <div class="field" id="field-email">
+          <label for="email">Email Address <span class="req" aria-label="required">*</span></label>
+          <input type="email" id="email" name="email"
+            placeholder="jane@email.com" autocomplete="email"
+            maxlength="254" aria-required="true" aria-describedby="err-email">
+          <span class="error-msg" id="err-email" role="alert" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label" aria-hidden="true">Booking Information</div>
+
+      <div class="form-row">
+        <div class="field" id="field-ref">
+          <label for="bookingRef">Booking Reference <span class="req" aria-label="required">*</span></label>
+          <input type="text" id="bookingRef" name="bookingRef"
+            placeholder="e.g. BK-20481" maxlength="50"
+            aria-required="true" aria-describedby="err-ref">
+          <span class="error-msg" id="err-ref" role="alert" aria-live="polite"></span>
+        </div>
+        <div class="field" id="field-date">
+          <label for="bookingDate">Booking Date <span class="req" aria-label="required">*</span></label>
+          <input type="date" id="bookingDate" name="bookingDate"
+            aria-required="true" aria-describedby="err-date">
+          <span class="error-msg" id="err-date" role="alert" aria-live="polite"></span>
+        </div>
+      </div>
+
+      <!-- 90-day warning -->
+      <div class="warning-banner" id="warningBanner" role="alert" aria-live="polite">
+        <span class="warning-icon" aria-hidden="true">⚠️</span>
+        <span>Your booking is outside the standard refund window.
+          Your request will be reviewed on a case-by-case basis.</span>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label" aria-hidden="true">Refund Details</div>
+
+      <div class="field" id="field-reason">
+        <label for="refundReason">Refund Reason <span class="req" aria-label="required">*</span></label>
+        <select id="refundReason" name="refundReason"
+          aria-required="true" aria-describedby="err-reason">
+          <option value="">Select a reason…</option>
+          <option value="Property Issue">Property Issue</option>
+          <option value="Booking Error">Booking Error</option>
+          <option value="Personal Reasons">Personal Reasons</option>
+          <option value="Other">Other</option>
+        </select>
+        <span class="error-msg" id="err-reason" role="alert" aria-live="polite"></span>
+      </div>
+
+      <div class="field">
+        <label for="details">Additional Details <span class="opt">— Optional</span></label>
+        <textarea id="details" name="details"
+          placeholder="Please describe your situation in as much detail as possible…"
+          maxlength="1000" aria-describedby="charCount"></textarea>
+        <div class="char-count" id="charCount" aria-live="polite">0 / 1000</div>
+      </div>
+
+      <div class="field">
+        <label for="fileInput">Supporting Documents <span class="opt">— Optional</span></label>
+        <div class="file-zone" id="fileZone" role="button"
+          tabindex="0" aria-label="Upload supporting documents">
+          <input type="file" id="fileInput" name="files"
+            multiple accept="image/*,.pdf,.doc,.docx"
+            aria-label="Choose files to upload">
+          <span class="file-icon" aria-hidden="true">📎</span>
+          <p><strong>Click to upload</strong> or drag and drop<br>
+            <span style="font-size:12px;color:var(--text-faint);">
+              Photos, PDFs, documents — up to 10 MB each</span></p>
+        </div>
+        <div class="file-list" id="fileList" aria-live="polite"></div>
+      </div>
+
+      <!-- Saving status -->
+      <div class="status-banner" id="statusBanner" role="status" aria-live="polite">
+        <span id="statusText"></span>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">Submit Refund Request</span>
+        <span class="btn-spinner" aria-hidden="true"></span>
+      </button>
+
+    </form>
+  </div><!-- /.form-wrapper -->
+
+  <!-- SUCCESS --------------------------------------------------------------- -->
+  <div class="card success-screen" id="successScreen"
+    role="region" aria-label="Submission confirmation" aria-live="assertive">
+    <div class="success-header">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <h2>Request Submitted</h2>
+      <p>We've received your refund request.
+        A confirmation summary is shown below.</p>
+    </div>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="success-actions">
+      <button class="action-btn btn-outline" id="printBtn">🖨️ Print / Save PDF</button>
+      <button class="action-btn btn-outline" id="csvBtn">⬇️ Export CSV</button>
+      <button class="action-btn btn-primary-sm" id="newRequestBtn">+ New Request</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Toast notification -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ── JAVASCRIPT ────────────────────────────────────────────────────────────── -->
+<script>
+'use strict';
+
+/* ── CONFIG ────────────────────────────────────────────────────────────────────
+   JSONBin.io — free persistent cloud storage.
+   This is a scoped ACCESS KEY (read + update on this bin only).
+   It is NOT the Master Key, so even if found in source:
+     ✗ Cannot delete the bin
+     ✗ Cannot access other bins or your account
+     ✗ Cannot create new bins
+
+   To use your OWN bin:
+     1. Sign up free at https://jsonbin.io
+     2. Create a bin  →  initial value: { "data": [] }
+     3. Access Keys → New Key → grant Read + Update on that bin only
+     4. Replace BIN_ID and API_KEY below
+   ─────────────────────────────────────────────────────────────────────────── */
+const JSONBIN_BIN_ID  = '69cbf203aaba882197afee2a';
+const JSONBIN_API_KEY = '$2a$10$WD4qdKLO04prS.teuwi2KO3he5KhM29gPyualCEC6uvmqU4/6ho1i';
+const JSONBIN_URL     = 'https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID;
+
+/* ── ALLOWED VALUES (server-side style allowlist) ────────────────────────── */
+const ALLOWED_REASONS = Object.freeze([
+  'Property Issue', 'Booking Error', 'Personal Reasons', 'Other'
+]);
+
+/* ── RATE-LIMIT GUARD (client-side, 3 submissions per minute) ────────────── */
+const SUBMISSION_TIMESTAMPS_KEY = 'gs_submission_ts';
+function isRateLimited() {
+  try {
+    const raw = localStorage.getItem(SUBMISSION_TIMESTAMPS_KEY);
+    const ts = raw ? JSON.parse(raw) : [];
+    const now = Date.now();
+    const recent = ts.filter(t => now - t < 60_000);   // last 60 s
+    localStorage.setItem(SUBMISSION_TIMESTAMPS_KEY, JSON.stringify(recent));
+    return recent.length >= 3;
+  } catch { return false; }
+}
+function recordSubmission() {
+  try {
+    const raw = localStorage.getItem(SUBMISSION_TIMESTAMPS_KEY);
+    const ts = raw ? JSON.parse(raw) : [];
+    ts.push(Date.now());
+    localStorage.setItem(SUBMISSION_TIMESTAMPS_KEY, JSON.stringify(ts));
+  } catch {}
+}
+
+/* ── THEME TOGGLE ────────────────────────────────────────────────────────── */
+const themeToggle = document.getElementById('themeToggle');
+(function initTheme() {
+  const saved = localStorage.getItem('gs_theme') || 'light';
+  applyTheme(saved);
+})();
+
+themeToggle.addEventListener('click', () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark'
+    ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('gs_theme', next);
+});
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+  themeToggle.setAttribute('aria-pressed', String(theme === 'dark'));
+  themeToggle.setAttribute('title', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+}
+
+/* ── TOAST ───────────────────────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;          // textContent — NOT innerHTML — no XSS
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), duration);
+}
+
+/* ── HTML ESCAPE UTILITY ──────────────────────────────────────────────────── */
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+/* ── JSONBIN HELPERS ─────────────────────────────────────────────────────── */
+async function fetchSubmissions() {
+  const res = await fetch(JSONBIN_URL + '/latest', {
+    headers: { 'X-Access-Key': JSONBIN_API_KEY }
+  });
+  if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+  const json = await res.json();
+  const record = json.record;
+  // Support both bin shapes
+  if (Array.isArray(record?.data)) return record.data;
+  if (Array.isArray(record))       return record;
+  return [];
+}
+
+async function saveToJsonBin(submission) {
+  // Read → append → write (optimistic single-writer assumption for this demo)
+  let existing = [];
+  try { existing = await fetchSubmissions(); } catch {}
+  existing.push(submission);
+  const res = await fetch(JSONBIN_URL, {
+    method: 'PUT',
+    headers: {
+      'Content-Type':  'application/json',
+      'X-Access-Key':  JSONBIN_API_KEY
+    },
+    body: JSON.stringify({ data: existing })
+  });
+  if (!res.ok) throw new Error('Save failed: HTTP ' + res.status);
+  return existing;
+}
+
+/* ── LOCAL STORAGE FALLBACK ──────────────────────────────────────────────── */
+const LS_KEY = 'gueststay_refund_requests';
+function saveLocal(data) {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    const all = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(all)) throw new Error('Corrupt data');
+    all.push(data);
+    localStorage.setItem(LS_KEY, JSON.stringify(all));
+  } catch (e) {
+    console.warn('localStorage save skipped:', e.name);
+  }
+}
+
+/* ── ID GENERATOR ────────────────────────────────────────────────────────── */
+function genId() {
+  const ts   = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return 'REF-' + ts + rand;
+}
+
+/* ── DATE WARNING ────────────────────────────────────────────────────────── */
+const bookingDateInput = document.getElementById('bookingDate');
+const warningBanner    = document.getElementById('warningBanner');
+
+// Restrict future dates in the date picker
+bookingDateInput.setAttribute('max', new Date().toISOString().slice(0, 10));
+
+function checkDateWarning(val) {
+  if (!val) { warningBanner.classList.remove('show'); return false; }
+  const booking = new Date(val + 'T00:00:00');
+  const today   = new Date(); today.setHours(0, 0, 0, 0);
+  if (booking > today) { warningBanner.classList.remove('show'); return false; }
+  const diffDays = Math.floor((today - booking) / 86_400_000);
+  const outside  = diffDays > 90;
+  warningBanner.classList.toggle('show', outside);
+  return outside;
+}
+bookingDateInput.addEventListener('change', () => checkDateWarning(bookingDateInput.value));
+
+/* ── CHARACTER COUNTER ───────────────────────────────────────────────────── */
+const detailsTA = document.getElementById('details');
+const charCount = document.getElementById('charCount');
+detailsTA.addEventListener('input', () => {
+  const n = detailsTA.value.length;
+  charCount.textContent = n + ' / 1000';
+  charCount.className   = 'char-count' + (n > 900 ? ' over' : n > 700 ? ' warn' : '');
+});
+
+/* ── FILE UPLOAD ─────────────────────────────────────────────────────────── */
+const fileZone  = document.getElementById('fileZone');
+const fileInput = document.getElementById('fileInput');
+const fileListEl = document.getElementById('fileList');
+let selectedFiles = [];
+
+const ALLOWED_MIME_TYPES = new Set([
+  'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+]);
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+const MAX_FILE_COUNT = 5;
+
+fileZone.addEventListener('dragover', e => { e.preventDefault(); fileZone.classList.add('dragover'); });
+fileZone.addEventListener('dragleave', () => fileZone.classList.remove('dragover'));
+fileZone.addEventListener('drop', e => {
+  e.preventDefault(); fileZone.classList.remove('dragover');
+  addFiles(Array.from(e.dataTransfer.files));
+});
+fileInput.addEventListener('change', () => {
+  addFiles(Array.from(fileInput.files));
+  fileInput.value = '';
+});
+// Keyboard accessibility for the file zone div
+fileZone.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') fileInput.click();
+});
+
+function addFiles(incoming) {
+  const rejected = [];
+  for (const f of incoming) {
+    if (selectedFiles.length >= MAX_FILE_COUNT) {
+      rejected.push(f.name + ' (max ' + MAX_FILE_COUNT + ' files)');
+      continue;
+    }
+    if (f.size > MAX_FILE_SIZE) {
+      rejected.push(f.name + ' (exceeds 10 MB)');
+      continue;
+    }
+    if (!ALLOWED_MIME_TYPES.has(f.type)) {
+      rejected.push(f.name + ' (unsupported type)');
+      continue;
+    }
+    if (selectedFiles.find(x => x.name === f.name)) continue; // dedupe
+    selectedFiles.push(f);
+  }
+  if (rejected.length) {
+    showToast('⚠️ Skipped: ' + rejected.join(', '), 4000);
+  }
+  renderFileList();
+}
+
+function renderFileList() {
+  fileListEl.innerHTML = selectedFiles.map((f, i) => `
+    <div class="file-item">
+      <span aria-hidden="true">📄</span>
+      <span>${esc(f.name)}</span>
+      <span style="color:var(--text-faint);font-size:12px;margin-left:4px;">
+        (${(f.size / 1024).toFixed(0)} KB)</span>
+      <button class="remove" data-i="${i}" type="button"
+        aria-label="Remove ${esc(f.name)}">×</button>
+    </div>
+  `).join('');
+  fileListEl.querySelectorAll('.remove').forEach(btn =>
+    btn.addEventListener('click', () => {
+      selectedFiles.splice(Number(btn.dataset.i), 1);
+      renderFileList();
+    })
+  );
+}
+
+/* ── VALIDATION HELPERS ──────────────────────────────────────────────────── */
+function setError(id, msg) {
+  const wrapper = document.getElementById('field-' + id);
+  if (!wrapper) return;
+  wrapper.classList.add('has-error');
+  const em = wrapper.querySelector('.error-msg');
+  if (em) em.textContent = msg;
+  const inp = wrapper.querySelector('input, select, textarea');
+  if (inp) { inp.classList.add('error'); inp.setAttribute('aria-invalid', 'true'); }
+}
+function clearError(id) {
+  const wrapper = document.getElementById('field-' + id);
+  if (!wrapper) return;
+  wrapper.classList.remove('has-error');
+  const inp = wrapper.querySelector('input, select, textarea');
+  if (inp) { inp.classList.remove('error'); inp.removeAttribute('aria-invalid'); }
+}
+
+/* ── STATUS BANNER ───────────────────────────────────────────────────────── */
+function setStatus(type, msg) {
+  const b  = document.getElementById('statusBanner');
+  const st = document.getElementById('statusText');
+  b.className      = 'status-banner show ' + type;
+  st.textContent   = msg;          // textContent, not innerHTML
+}
+function clearStatus() {
+  document.getElementById('statusBanner').className = 'status-banner';
+}
+
+/* ── FORM SUBMIT ─────────────────────────────────────────────────────────── */
+document.getElementById('refundForm').addEventListener('submit', async e => {
+  e.preventDefault();
+
+  // ── Rate-limit check ─────────────────────────────────────────────────────
+  if (isRateLimited()) {
+    showToast('⚠️ Too many submissions. Please wait a moment.', 5000);
+    return;
+  }
+
+  let valid = true;
+
+  // ── Sanitise + length-cap inputs ─────────────────────────────────────────
+  const name    = document.getElementById('fullName').value.trim().slice(0, 120);
+  const email   = document.getElementById('email').value.trim().slice(0, 254);
+  const ref     = document.getElementById('bookingRef').value.trim().slice(0, 50);
+  const date    = document.getElementById('bookingDate').value;           // YYYY-MM-DD
+  const reason  = document.getElementById('refundReason').value;
+  const details = detailsTA.value.trim().slice(0, 1000);
+
+  ['name', 'email', 'ref', 'date', 'reason'].forEach(clearError);
+  clearStatus();
+
+  // ── Field validation ──────────────────────────────────────────────────────
+  if (!name) {
+    setError('name', 'Please enter your full name.'); valid = false;
+  }
+
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRx.test(email)) {
+    setError('email', 'Please enter a valid email address.'); valid = false;
+  }
+
+  if (!ref) {
+    setError('ref', 'Please enter your booking reference.'); valid = false;
+  }
+
+  if (!date) {
+    setError('date', 'Please select the booking date.'); valid = false;
+  } else {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    if (new Date(date + 'T00:00:00') > today) {
+      setError('date', 'Booking date cannot be in the future.'); valid = false;
+    }
+  }
+
+  if (!reason) {
+    setError('reason', 'Please select a refund reason.'); valid = false;
+  } else if (!ALLOWED_REASONS.includes(reason)) {
+    // Allowlist check — catches tampered DOM values
+    setError('reason', 'Invalid reason selected.'); valid = false;
+  }
+
+  if (!valid) {
+    const first = document.querySelector('.has-error');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // ── Disable button / show spinner ─────────────────────────────────────────
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.classList.add('loading');
+  setStatus('saving', '⏳ Saving your request…');
+
+  const isOutside = checkDateWarning(date);
+
+  const submission = {
+    id:           genId(),
+    submittedAt:  new Date().toISOString(),
+    fullName:     name,
+    email:        email,
+    bookingRef:   ref,
+    bookingDate:  date,
+    refundReason: reason,
+    details:      details || '—',
+    files:        selectedFiles.map(f => f.name),
+    outsideWindow: isOutside,
+  };
+
+  // ── Persist ───────────────────────────────────────────────────────────────
+  let savedOnline = false;
+  try {
+    await saveToJsonBin(submission);
+    savedOnline = true;
+    recordSubmission();
+  } catch (err) {
+    console.warn('JSONBin save failed, falling back to localStorage:', err.message);
+  }
+  saveLocal(submission);  // always keep a local backup
+
+  // ── Reset UI ──────────────────────────────────────────────────────────────
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+  clearStatus();
+
+  showSuccess(submission, savedOnline);
+});
+
+/* ── DATE / DATETIME FORMATTERS ──────────────────────────────────────────── */
+function formatDate(isoDate) {
+  return new Date(isoDate + 'T00:00:00').toLocaleDateString('en-GB', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
+}
+function formatDateTime(isoDatetime) {
+  return new Date(isoDatetime).toLocaleString('en-GB', {
+    day: 'numeric', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+/* ── SUCCESS SCREEN ──────────────────────────────────────────────────────── */
+let lastSubmission = null;
+
+function showSuccess(s, online) {
+  lastSubmission = s;
+  document.getElementById('formWrapper').classList.add('hide');
+  const screen = document.getElementById('successScreen');
+  screen.classList.add('show');
+
+  const rows = [
+    ['Request ID',         `<span class="ref-badge">${esc(s.id)}</span>`],
+    ['Submitted',          esc(formatDateTime(s.submittedAt))],
+    ['Saved To',           online
+      ? '✅ Cloud (JSONBin) + Local backup'
+      : '⚠️ Local storage only (offline fallback)'],
+    ['Full Name',          esc(s.fullName)],
+    ['Email',              esc(s.email)],
+    ['Booking Reference',  esc(s.bookingRef)],
+    ['Booking Date',       esc(formatDate(s.bookingDate)) +
+      (s.outsideWindow
+        ? ' <span class="outside-window">— Outside refund window</span>'
+        : '')],
+    ['Refund Reason',      esc(s.refundReason)],
+    ['Additional Details', esc(s.details)],
+    ['Attachments',        s.files.length
+      ? s.files.map(esc).join(', ')
+      : '<span style="color:var(--text-faint)">None uploaded</span>'],
+  ];
+
+  document.getElementById('summaryGrid').innerHTML = rows.map(([k, v]) => `
+    <div class="summary-row">
+      <span class="summary-key">${esc(k)}</span>
+      <span class="summary-val">${v}</span>
+    </div>
+  `).join('');
+
+  screen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  screen.focus();
+
+  showToast(
+    online ? '✅ Request saved to cloud!' : '⚠️ Saved locally — check your connection.',
+    4000
+  );
+}
+
+/* ── CSV EXPORT ──────────────────────────────────────────────────────────── */
+document.getElementById('csvBtn').addEventListener('click', () => {
+  if (!lastSubmission) return;
+  const s = lastSubmission;
+
+  const headers = [
+    'Request ID', 'Submitted At', 'Full Name', 'Email',
+    'Booking Reference', 'Booking Date', 'Refund Reason',
+    'Additional Details', 'Attachments', 'Outside 90-day Window'
+  ];
+  const values = [
+    s.id, s.submittedAt, s.fullName, s.email, s.bookingRef,
+    s.bookingDate, s.refundReason,
+    s.details,
+    s.files.join('; ') || 'None',
+    s.outsideWindow ? 'Yes' : 'No'
+  ];
+
+  const csvLine = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const csv = [headers.map(csvLine), values.map(csvLine)].map(r => r.join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }); // BOM for Excel
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'refund-' + s.id + '.csv';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('📥 CSV downloaded!');
+});
+
+/* ── PRINT ───────────────────────────────────────────────────────────────── */
+document.getElementById('printBtn').addEventListener('click', () => {
+  showToast('🖨️ Opening print dialog…');
+  setTimeout(() => window.print(), 400);
+});
+
+/* ── NEW REQUEST ─────────────────────────────────────────────────────────── */
+document.getElementById('newRequestBtn').addEventListener('click', () => {
+  document.getElementById('refundForm').reset();
+  selectedFiles = [];
+  renderFileList();
+  warningBanner.classList.remove('show');
+  charCount.textContent = '0 / 1000';
+  charCount.className   = 'char-count';
+  clearStatus();
+  lastSubmission = null;
+  document.getElementById('formWrapper').classList.remove('hide');
+  document.getElementById('successScreen').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('fullName').focus();
+});
+</script>
+</body>
+</html>
