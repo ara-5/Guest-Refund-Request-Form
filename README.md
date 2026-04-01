@@ -2,7 +2,7 @@
 
 > A production-ready internal tool built as part of a take-home engineering assessment. Demonstrates full-stack thinking in a zero-dependency, single-file frontend: cloud persistence, conditional UX logic, security hardening, and a polished UI — deployed and live.
 
-**[→ Live Demo](https://your-live-url.netlify.app)** &nbsp;|&nbsp; Built with: HTML · CSS · Vanilla JS · JSONBin.io
+**[→ Live Demo](https://celadon-churros-e0523d.netlify.app/)** &nbsp;|&nbsp; Built with: HTML · CSS · Vanilla JS · JSONBin.io
 
 ---
 
@@ -122,3 +122,7 @@ const JSONBIN_API_KEY = 'YOUR_ACCESS_KEY';
 ## License
 
 MIT
+
+## Author
+
+Built by **Athira Anil Kumar**
